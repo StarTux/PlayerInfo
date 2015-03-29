@@ -1,0 +1,60 @@
+name: PlayerInfo
+description: Store some information about players
+author: StarTux
+version: 0.1
+main: com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin
+depend: [ PlayerCache, Vault ]
+database: true
+commands:
+  playerinfo:
+    description: Admin interface
+    permission: playerinfo.playerinfo
+  status:
+    description: Summarize player information
+    permission: playerinfo.status
+  loginfo:
+    description: Get login information of players
+    permission: playerinfo.loginfo
+  firstlog:
+    description: List first logins
+    permission: playerinfo.firstlog
+  lastlog:
+    description: List last logins
+    permission: playerinfo.lastlog
+  ontime:
+    description: List player online time
+    permission: playerinfo.ontime
+permissions:
+  playerinfo.playerinfo:
+    description: Use /playerinfo
+    default: op
+  playerinfo.status:
+    description: Use /status
+    default: op
+  playerinfo.loginfo:
+    description: Use /loginfo
+    default: op
+  playerinfo.loginfo.admin:
+    description: Use /loginfo on others
+    default: op
+  playerinfo.firstlog:
+    description: Use /firstlog
+    default: op
+  playerinfo.lastlog:
+    description: Use /lastlog
+    default: op
+  playerinfo.ontime:
+    description: Use /ontime
+    default: op
+  playerinfo.ontime.top:
+    description: Use /ontime -top
+    default: op
+  playerinfo.ontime.admin:
+    description: Use /ontime on others
+    default: op
+  playerinfo.hidden:
+    description: Hide some of your information
+    default: op
+  playerinfo.notify:
+    description: Receive notifications about alt accounts
+    default: op
