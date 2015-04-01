@@ -60,8 +60,9 @@ class BukkitPlayerInfo extends PlayerInfo {
     public boolean hasPermission(UUID uuid, String permission) {
         if (uuid == null) return true;
         Player player = Bukkit.getServer().getPlayer(uuid);
-        if (player == null) return false;
-        return player.hasPermission(permission);
+        if (player != null) return player.hasPermission(permission);
+        OfflinePlayer offPlayer = Bukkit.getServer().getOfflinePlayer(uuid);
+        return plugin.getPermission().playerHas((String)null, offPlayer, permission);
     }
 
     @Override
@@ -77,7 +78,7 @@ class BukkitPlayerInfo extends PlayerInfo {
         String suffix = plugin.getChat().getPlayerSuffix((String)null, player);
         if (prefix == null) prefix = "";
         if (suffix == null) suffix = "";
-        return prefix + suffix;
+        return ChatColor.translateAlternateColorCodes('&', prefix + suffix);
     }
 
     @Override

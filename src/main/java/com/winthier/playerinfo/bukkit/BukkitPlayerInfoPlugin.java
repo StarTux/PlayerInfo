@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import javax.persistence.PersistenceException;
 import net.milkbowl.vault.chat.Chat;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +27,7 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     private final int TPS = 20;
     private BukkitPlayerInfo info;
     private Chat chat;
+    private Permission permission;
     private final BukkitEventHandler eventHandler = new BukkitEventHandler(this);
     private BukkitRunnable onTimeTask;
     private LookupService geoip;
@@ -34,6 +36,12 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
         RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
         if (chatProvider != null) chat = chatProvider.getProvider();
         return (chat != null);
+    }
+
+    private boolean setupPermission() {
+        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
+        if (permissionProvider != null) permission = permissionProvider.getProvider();
+        return (permission != null);
     }
 
     @Override
@@ -95,6 +103,13 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
             if (!setupChat()) return null;
         }
         return chat;
+    }
+
+    Permission getPermission() {
+        if (permission == null) {
+            if (!setupPermission()) return null;
+        }
+        return permission;
     }
 
     List<UUID> getOnlineUuids() {
