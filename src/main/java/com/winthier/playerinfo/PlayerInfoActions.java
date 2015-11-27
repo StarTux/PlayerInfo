@@ -66,6 +66,7 @@ public class PlayerInfoActions {
         OnlinePlayerInfo opi = info.getOnlinePlayerInfo(player);
         if (opi != null) {
             info.send(sender, " &3Online: &bYes");
+            info.send(sender, " &Game Mode: &7%s", opi.getGameMode());
             info.send(sender, " &8Location: &7%s %d,%,d,%d", opi.getWorld(), opi.getX(), opi.getY(), opi.getZ());
             info.send(sender, " &8Health: &7%d/%d", opi.getHealth(), opi.getMaxHealth());
             info.send(sender, " &8Food: &7%d/%d &8Sat: &7%d", opi.getFoodLevel(), 20, opi.getSaturation());

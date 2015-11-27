@@ -99,6 +99,7 @@ class BukkitPlayerInfo extends PlayerInfo {
             potionEffects.add(Strings.camelCase(effect.getType().getName()) + " " + (effect.getAmplifier() + 1));
         }
         result.setPotionEffects(potionEffects);
+        result.setGameMode(Strings.camelCase(player.getGameMode().toString()));
         return result;
     }
 
