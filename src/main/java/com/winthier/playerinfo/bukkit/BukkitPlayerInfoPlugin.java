@@ -111,7 +111,6 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     LookupService getGeoIP() {
         if (geoip == null) {
             try {
-                saveResource("GeoIP.dat", false);
                 geoip = new LookupService(new File(getDataFolder(), "GeoIP.dat"), LookupService.GEOIP_MEMORY_CACHE);
             } catch (Exception e) {
                 e.printStackTrace();
