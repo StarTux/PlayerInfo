@@ -34,7 +34,7 @@ public class PlayerInfoCommands {
                 if (args.length >= 2) {
                     String pageArg = args[1];
                     try {
-                        page = Integer.parseInt(pageArg);
+                        page = Integer.parseInt(pageArg) - 1;
                     } catch (NumberFormatException nfe) {
                         page = -1;
                     }
