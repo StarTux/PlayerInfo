@@ -1,7 +1,6 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.Length;
-import com.avaje.ebean.validation.NotEmpty;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -19,8 +18,7 @@ public class CountryRow {
     @Id
     private Integer id;
 
-    @NotEmpty
-    @Length(max=LENGTH)
+    @Column(nullable = false, length = LENGTH)
     private String country;
 
     public static CountryRow find(String country) {

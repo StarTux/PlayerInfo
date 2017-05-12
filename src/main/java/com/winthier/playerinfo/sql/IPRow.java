@@ -1,9 +1,8 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.Length;
-import com.avaje.ebean.validation.NotEmpty;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -24,15 +23,8 @@ public class IPRow {
     @Id
     private Integer id;
 
-    @NotEmpty
-    @Length(max=40)
+    @Column(nullable = false, length = 40)
     private String ip;
-
-    @OneToMany(mappedBy="ip", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private List<PlayerIPRow> playerIps;
-
-    @OneToOne(mappedBy="ip", optional=true, fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private IgnoredIPRow ignored;
 
     public static IPRow forId(int id) {
         return DB.get().find(IPRow.class).where().idEq(id).findUnique();

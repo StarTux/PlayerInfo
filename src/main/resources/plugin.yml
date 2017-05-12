@@ -3,8 +3,7 @@ description: Store some information about players
 author: StarTux
 version: 0.1
 main: com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin
-depend: [ PlayerCache, Vault ]
-database: true
+depend: [ SQL, PlayerCache, Vault ]
 commands:
   playerinfo:
     description: Admin interface

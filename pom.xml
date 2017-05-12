@@ -55,6 +55,12 @@
       <artifactId>playercache</artifactId>
       <version>0.1</version>
     </dependency>
+    <!-- SQL -->
+    <dependency>
+      <groupId>com.winthier.sql</groupId>
+      <artifactId>sql</artifactId>
+      <version>0.1</version>
+    </dependency>
     <!-- Vault -->
     <dependency>
       <groupId>net.milkbowl.vault</groupId>

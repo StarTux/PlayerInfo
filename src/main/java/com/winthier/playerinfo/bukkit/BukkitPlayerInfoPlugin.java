@@ -4,6 +4,8 @@ import com.maxmind.geoip.LookupService;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.PlayerInfoCommands;
 import com.winthier.playerinfo.sql.*;
+import com.winthier.sql.SQLDatabase;
+import com.winthier.sql.SQLDatabase;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.PersistenceException;
+import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.Command;
@@ -22,6 +25,7 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+@Getter
 public class BukkitPlayerInfoPlugin extends JavaPlugin {
     private final int ON_TIME_SECONDS = 60;
     private final int TPS = 20;
@@ -31,6 +35,7 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     private final BukkitEventHandler eventHandler = new BukkitEventHandler(this);
     private BukkitRunnable onTimeTask;
     private LookupService geoip;
+    private SQLDatabase db;
     
     private boolean setupChat() {
         RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
@@ -47,20 +52,19 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         this.info = new BukkitPlayerInfo(this);
-        try {
-            for (Class<?> clazz : getDatabaseClasses()) {
-                getDatabase().find(clazz).findRowCount();
-            }
-        } catch (PersistenceException ex) {
-            getLogger().info("Installing database for " + getDescription().getName() + " due to first time usage");
-            try {
-                installDDL();
-            } catch (Exception e) {
-                getLogger().warning("Database setup failed. Disabling " + getDescription().getName());
-                e.printStackTrace();
-                getServer().getPluginManager().disablePlugin(this);
-                return;
-            }
+        db = new SQLDatabase(this);
+        db.registerTables(CountryRow.class,
+                          IPRow.class,
+                          IgnoredIPRow.class,
+                          LogInfoRow.class,
+                          OnTimeRow.class,
+                          PlayerCountryAndIPRow.class,
+                          PlayerIPRow.class,
+                          PlayerRow.class);
+        if (!db.createAllTables()) {
+            getLogger().warning("Database setup failed. Disabling " + getDescription().getName());
+            getServer().getPluginManager().disablePlugin(this);
+            return;
         }
         for (String name : getDescription().getCommands().keySet()) {
             getCommand(name).setExecutor(new MyCommand(name));
@@ -82,20 +86,6 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String args[]) {
         return false;
-    }
-
-    @Override
-    public List<Class<?>> getDatabaseClasses() {
-        return Arrays.asList(
-            CountryRow.class,
-            IPRow.class,
-            IgnoredIPRow.class,
-            LogInfoRow.class,
-            OnTimeRow.class,
-            PlayerCountryAndIPRow.class,
-            PlayerIPRow.class,
-            PlayerRow.class
-            );
     }
 
     Chat getChat() {

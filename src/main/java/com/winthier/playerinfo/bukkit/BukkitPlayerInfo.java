@@ -1,9 +1,9 @@
 package com.winthier.playerinfo.bukkit;
 
-import com.avaje.ebean.EbeanServer;
 import com.winthier.playerinfo.OnlinePlayerInfo;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.util.Strings;
+import com.winthier.sql.SQLDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -21,8 +21,8 @@ class BukkitPlayerInfo extends PlayerInfo {
     private final BukkitPlayerInfoPlugin plugin;
 
     @Override
-    public EbeanServer getDatabase() {
-        return plugin.getDatabase();
+    public SQLDatabase getDatabase() {
+        return plugin.getDb();
     }
 
     @Override

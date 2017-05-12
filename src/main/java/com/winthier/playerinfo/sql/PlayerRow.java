@@ -1,9 +1,9 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.NotNull;
 import java.util.List;
 import java.util.UUID;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -23,21 +23,25 @@ public class PlayerRow {
     @Id
     private Integer id;
 
-    @NotNull
+    @Column(nullable = false)
     private UUID uuid;
 
-    @OneToMany(mappedBy="player", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private List<PlayerIPRow> ips;
+    public List<PlayerIPRow> getIps() {
+        return DB.get().find(PlayerIPRow.class).where().eq("player", this).findList();
+    }
 
-    @OneToOne(mappedBy="player", optional=true, fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private OnTimeRow onTime;
+    public OnTimeRow getOnTime() {
+        return OnTimeRow.find(this);
+    }
 
-    @OneToOne(mappedBy="player", optional=true, fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private LogInfoRow logInfo;
+    public LogInfoRow getLogInfo() {
+        return LogInfoRow.find(this);
+    }
 
-    @OneToOne(mappedBy="player", optional=true, fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
-    private PlayerCountryAndIPRow country;
-    
+    public PlayerCountryAndIPRow getCountry() {
+        return PlayerCountryAndIPRow.find(this);
+    }
+
     public static PlayerRow find(UUID uuid) {
         return DB.get().find(PlayerRow.class).where().eq("uuid", uuid).findUnique();
     }

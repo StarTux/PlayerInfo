@@ -1,8 +1,8 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.NotNull;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -30,13 +30,14 @@ public class LogInfoRow {
     @Id
     private Integer id;
 
-    @NotNull @OneToOne(optional=false, fetch=FetchType.LAZY)
+    @Column(nullable = false)
+    @OneToOne(optional=false, fetch=FetchType.LAZY)
     private PlayerRow player;
 
-    @NotNull
+    @Column(nullable = false)
     private Date firstLog;
 
-    @NotNull
+    @Column(nullable = false)
     private Date lastLog;
 
     @Version
@@ -45,8 +46,8 @@ public class LogInfoRow {
     public static List<LogInfoRow> rankLogins(Data data, int page) {
         if (data == null) throw new NullPointerException("Data cannot be null");
         if (page < 0) throw new IllegalArgumentException("Page cannot be negative");
-        String orderBy = data == Data.FIRST ? "first_log desc" : "last_log desc";
-        return DB.get().find(LogInfoRow.class).orderBy(orderBy).setFirstRow(page * PAGE_LENGTH).setMaxRows(PAGE_LENGTH).findList();
+        String orderBy = data == Data.FIRST ? "first_log" : "last_log";
+        return DB.get().find(LogInfoRow.class).orderByDescending(orderBy).offset(page * PAGE_LENGTH).limit(PAGE_LENGTH).findList();
     }
 
     public static int count() {

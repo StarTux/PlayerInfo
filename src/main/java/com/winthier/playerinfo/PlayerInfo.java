@@ -1,9 +1,9 @@
 package com.winthier.playerinfo;
 
-import com.avaje.ebean.EbeanServer;
 import com.winthier.playerinfo.sql.*;
 import com.winthier.playerinfo.util.Players;
 import com.winthier.playerinfo.util.Strings;
+import com.winthier.sql.SQLDatabase;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -26,7 +26,7 @@ public abstract class PlayerInfo {
         instance = this;
     }
     
-    public abstract EbeanServer getDatabase();
+    public abstract SQLDatabase getDatabase();
     public abstract String format(String msg, Object... args);
     public abstract boolean send(UUID uuid, String msg, Object... args);
     public abstract void announce(String permission, String msg, Object... args);

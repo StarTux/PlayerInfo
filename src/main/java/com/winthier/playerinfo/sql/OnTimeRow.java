@@ -1,7 +1,7 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.NotNull;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -23,11 +23,11 @@ public class OnTimeRow {
     @Id
     private Integer id;
 
-    @NotNull
+    @Column(nullable = false)
     @OneToOne(optional=false, fetch=FetchType.LAZY)
     private PlayerRow player;
 
-    @NotNull
+    @Column(nullable = false)
     private Integer seconds;
 
     @Version
@@ -35,7 +35,7 @@ public class OnTimeRow {
 
     public static List<OnTimeRow> rankOntimes(int page) {
         if (page < 0) throw new IllegalArgumentException("Page cannot be negative");
-        return DB.get().find(OnTimeRow.class).orderBy("seconds desc").setFirstRow(page * PAGE_LENGTH).setMaxRows(PAGE_LENGTH).findList();
+        return DB.get().find(OnTimeRow.class).orderByDescending("seconds").offset(page * PAGE_LENGTH).limit(PAGE_LENGTH).findList();
     }
 
     public static int count() {

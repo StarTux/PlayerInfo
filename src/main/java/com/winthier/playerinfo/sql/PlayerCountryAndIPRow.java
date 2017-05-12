@@ -1,7 +1,7 @@
 package com.winthier.playerinfo.sql;
 
-import com.avaje.ebean.validation.NotNull;
 import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
@@ -22,7 +22,7 @@ public class PlayerCountryAndIPRow {
     @Id
     private Integer id;
 
-    @NotNull
+    @Column(nullable = false)
     @OneToOne(fetch=FetchType.LAZY)
     private PlayerRow player;
 
