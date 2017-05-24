@@ -74,6 +74,10 @@ class BukkitPlayerInfo extends PlayerInfo {
     public String getTitle(UUID uuid) {
         if (uuid == null) throw new NullPointerException("UUID cannot be null");
         OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(uuid);
+        if (plugin.getChat() == null) {
+            if (plugin.getPermission() != null) return plugin.getPermission().getPrimaryGroup((String)null, player);
+            return null;
+        }
         String prefix = plugin.getChat().getPlayerPrefix((String)null, player);
         String suffix = plugin.getChat().getPlayerSuffix((String)null, player);
         if (prefix == null) prefix = "";
