@@ -72,7 +72,7 @@ public class PlayerInfoCommands {
         info.getActions().listPlayerIPs(sender, Players.getUuid(args[0]));
         return true;
     }
-    
+
     private boolean playerinfoSharedIPs(UUID sender, String[] args) {
         if (args.length < 1) return false;
         info.getActions().findSharedIPs(sender, Players.getUuids(Arrays.<String>asList(args)));
@@ -85,12 +85,13 @@ public class PlayerInfoCommands {
         info.getActions().listAltIPs(sender, playerUuid);
         return true;
     }
-    
+
     private void playerinfoUsage(UUID sender) {
         info.send(sender, "&3/PlayerInfo &bIgnoredIPs List|Add|Remove &7- &3Ignored IPs");
         info.send(sender, "&3/PlayerInfo &bListIPs <&oName&b> &7- &3Show known IPs of player");
         info.send(sender, "&3/PlayerInfo &bSharedIPs <&oName&b...> &7- &3Find common IPs");
         info.send(sender, "&3/PlayerInfo &bAltIPs <&oName&b> &7- &3Find common IPs of alts");
+        info.send(sender, "&3/PlayerInfo &bOnlineCountries &7- &3Where are online players from");
     }
 
     private boolean playerinfoPrivate(UUID sender, String[] args) {
@@ -105,6 +106,9 @@ public class PlayerInfoCommands {
             return playerinfoSharedIPs(sender, Arrays.copyOfRange(args, 1, args.length));
         } else if (args.length >= 2 && firstArg.equalsIgnoreCase("AltIPs")) {
             return playerinfoAltIPs(sender, Arrays.copyOfRange(args, 1, args.length));
+        } else if (args.length >= 1 && firstArg.equalsIgnoreCase("OnlineCountries")) {
+            info.getActions().onlineCountries(sender);
+            return true;
         } else {
             return false;
         }

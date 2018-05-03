@@ -5,11 +5,16 @@ import com.winthier.playerinfo.sql.*;
 import com.winthier.playerinfo.util.Players;
 import com.winthier.playerinfo.util.Strings;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
 public class PlayerInfoActions {
@@ -190,5 +195,37 @@ public class PlayerInfoActions {
         if (alts.isEmpty()) throw new PlayerInfoException("Nothing found");
         alts.add(player);
         findSharedIPs(sender, alts);
+    }
+
+    void onlineCountries(UUID sender) {
+        Map<String, Integer> stats = new HashMap<>();
+        Map<String, List<String>> names = new HashMap<>();
+        for (Player player: Bukkit.getServer().getOnlinePlayers()) {
+            PlayerRow playerRow = PlayerRow.find(player.getUniqueId());
+            if (playerRow == null) continue;
+            PlayerCountryAndIPRow countryIPRow = playerRow.getCountry();
+            if (countryIPRow == null) continue;
+            CountryRow countryRow = countryIPRow.getCountry();
+            if (countryRow == null) continue;
+            String country = countryRow.getCountry();
+            if (country == null) country = "N/A";
+            Integer count = stats.get(country);
+            if (count == null) count = 0;
+            stats.put(country, count + 1);
+            List<String> namesl = names.get(country);
+            if (namesl == null) {
+                namesl = new ArrayList<>();
+                names.put(country, namesl);
+            }
+            namesl.add(player.getName());
+        }
+        List<String> ls = new ArrayList<>(stats.keySet());
+        Collections.sort(ls, (a, b) -> Integer.compare(stats.get(b), stats.get(a)));
+        for (String country: ls) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(country).append("(&e").append(stats.get(country)).append("&r)&7");
+            for (String name: names.get(country)) sb.append(" ").append(name);
+            info.send(sender, sb.toString());
+        }
     }
 }
