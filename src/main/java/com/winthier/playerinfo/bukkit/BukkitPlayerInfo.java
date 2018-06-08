@@ -97,7 +97,8 @@ class BukkitPlayerInfo extends PlayerInfo {
         result.setFoodLevel(player.getFoodLevel());
         result.setSaturation((int)player.getSaturation());
         result.setExpLevel(player.getLevel());
-        result.setExp((int)player.getExp());
+        result.setExpPerc((int)Math.round(player.getExp() * 100f));
+        result.setExp((int)(player.getExp() * (float)player.getExpToLevel()));
         List<String> potionEffects = new ArrayList<>();
         for (PotionEffect effect : player.getActivePotionEffects()) {
             potionEffects.add(Strings.camelCase(effect.getType().getName()) + " " + (effect.getAmplifier() + 1));

@@ -7,7 +7,7 @@ import java.util.List;
 public class OnlinePlayerInfo {
     private String world;
     private int x, y, z;
-    private int health, maxHealth, foodLevel, saturation, exp, expLevel;
+    private int health, maxHealth, foodLevel, saturation, exp, expPerc, expLevel;
     private List<String> potionEffects;
     private String gameMode;
 
