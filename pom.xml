@@ -4,9 +4,9 @@
   <groupId>com.winthier.playerinfo</groupId>
   <artifactId>playerinfo</artifactId>
   <packaging>jar</packaging>
-  <version>0.1</version>
-  <name>playerinfo</name>
-  <url>http://maven.apache.org</url>
+  <version>0.1-SNAPSHOT</version>
+  <name>PlayerInfo</name>
+  <url>https://cavetale.com</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
@@ -14,7 +14,7 @@
     <!-- Spigot Repo -->
     <repository>
       <id>spigot-repo</id>
-      <url>https://hub.spigotmc.org/nexus/content/groups/public/</url>
+      <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
     <!-- Repository for Vault -->
     <repository>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.12.2-R0.1-SNAPSHOT</version>
+      <version>1.13-pre7-R0.1-SNAPSHOT</version>
     </dependency>
     <!-- Lombok -->
     <dependency>
@@ -53,19 +53,19 @@
     <dependency>
       <groupId>com.winthier.playercache</groupId>
       <artifactId>playercache</artifactId>
-      <version>0.1</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
     <!-- SQL -->
     <dependency>
       <groupId>com.winthier.sql</groupId>
       <artifactId>sql</artifactId>
-      <version>0.1</version>
+      <version>0.1-SNAPSHOT</version>
     </dependency>
     <!-- Vault -->
     <dependency>
       <groupId>net.milkbowl.vault</groupId>
       <artifactId>VaultAPI</artifactId>
-      <version>1.5</version>
+      <version>1.6</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -85,6 +85,35 @@
             <arg>-Xlint:unchecked</arg>
           </compilerArgs>
         </configuration>
+      </plugin>
+      <!-- Shade -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.maxmind.geoip:geoip-api</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>com.maxmind.geoip:geoip-api</artifact>
+                  <includes>
+                    <include>com/maxmind/geoip/**</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
