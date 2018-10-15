@@ -61,7 +61,7 @@ public class PlayerCountryAndIPRow {
         }
         if (ip != null) result.setIp(ip);
         if (country != null) result.setCountry(country);
-        DB.get().save(result);
+        DB.get().saveAsync(result, null);
         return result;
     }
 }

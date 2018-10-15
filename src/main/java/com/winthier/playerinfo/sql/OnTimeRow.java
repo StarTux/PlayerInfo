@@ -67,10 +67,10 @@ public class OnTimeRow {
             result = new OnTimeRow();
             result.setPlayer(player);
             result.setSeconds(60);
-            DB.get().save(result);
+            DB.get().saveAsync(result, null);
         } else {
             result.setSeconds(result.getSeconds() + seconds);
-            DB.get().save(result);
+            DB.get().saveAsync(result, null);
         }
         return result;
     }

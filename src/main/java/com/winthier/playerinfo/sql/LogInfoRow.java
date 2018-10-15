@@ -69,7 +69,7 @@ public class LogInfoRow {
             result.setPlayer(player);
             result.setFirstLog(new Date());
             result.setLastLog(new Date());
-            DB.get().save(result);
+            DB.get().saveAsync(result, null);
         }
         return result;
     }
@@ -81,10 +81,10 @@ public class LogInfoRow {
             result.setPlayer(player);
             result.setFirstLog(new Date());
             result.setLastLog(new Date());
-            DB.get().save(result);
+            DB.get().saveAsync(result, null);
         } else {
             result.setLastLog(new Date());
-            DB.get().save(result);
+            DB.get().saveAsync(result, null);
         }
         return result;
     }
