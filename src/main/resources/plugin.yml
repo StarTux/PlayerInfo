@@ -58,4 +58,4 @@ permissions:
     default: op
   playerinfo.notify:
     description: Receive notifications about alt accounts
-    default: op
+    default: false
