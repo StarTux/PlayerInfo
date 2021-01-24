@@ -8,7 +8,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,9 +28,6 @@ public class OnTimeRow {
 
     @Column(nullable = false)
     private Integer seconds;
-
-    @Version
-    private Integer version;
 
     public static List<OnTimeRow> rankOntimes(int page) {
         if (page < 0) throw new IllegalArgumentException("Page cannot be negative");

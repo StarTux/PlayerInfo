@@ -9,7 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,9 +38,6 @@ public class LogInfoRow {
 
     @Column(nullable = false)
     private Date lastLog;
-
-    @Version
-    private Integer version;
 
     public static List<LogInfoRow> rankLogins(Data data, int page) {
         if (data == null) throw new NullPointerException("Data cannot be null");

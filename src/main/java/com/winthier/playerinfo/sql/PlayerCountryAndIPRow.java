@@ -9,7 +9,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.persistence.Version;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,9 +30,6 @@ public class PlayerCountryAndIPRow {
 
     @ManyToOne
     private CountryRow country;
-
-    @Version
-    private Integer version;
 
     public static PlayerCountryAndIPRow forId(int id) {
         return DB.get().find(PlayerCountryAndIPRow.class).where().idEq(id).findUnique();
