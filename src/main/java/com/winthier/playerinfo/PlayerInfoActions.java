@@ -132,7 +132,7 @@ public class PlayerInfoActions {
     }
 
     void listIgnoredIPs(UUID sender) {
-        info.send(sender, "&3Ignored IPs: &b%s", Strings.join(info.getIgnoredIPs(), ", "));
+        info.send(sender, "&3Ignored IPs: &b%s", Strings.join(IgnoredIPRow.findAllAsString(), ", "));
     }
 
     void addIgnoredIP(UUID sender, String ip) {
@@ -140,7 +140,6 @@ public class PlayerInfoActions {
         IPRow ipRow = IPRow.findOrCreate(ip);
         IgnoredIPRow.findOrCreate(ipRow);
         info.send(sender, "&3IP ignored: &b%s", ip);
-        info.flushIgnoredIPs();
     }
 
     void removeIgnoredIP(UUID sender, String ip) {
@@ -149,7 +148,6 @@ public class PlayerInfoActions {
         if (ipRow == null) throw new PlayerInfoException("Unknown IP: " + ip);
         if (!IgnoredIPRow.delete(ipRow)) throw new PlayerInfoException("IP not ignored: " + ipRow.getIp());
         info.send(sender, "&3IP no longer ignored: &b%s", ip);
-        info.flushIgnoredIPs();
     }
 
     void listPlayerIPs(UUID sender, UUID player) {

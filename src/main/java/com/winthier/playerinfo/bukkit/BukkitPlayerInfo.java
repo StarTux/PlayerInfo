@@ -31,7 +31,7 @@ class BukkitPlayerInfo extends PlayerInfo {
         if (args.length > 0) msg = String.format(msg, args);
         return msg;
     }
-    
+
     @Override
     public boolean send(UUID uuid, String msg, Object... args) {
         msg = format(msg, args);
@@ -55,31 +55,31 @@ class BukkitPlayerInfo extends PlayerInfo {
             }
         }
     }
-    
+
     @Override
     public boolean hasPermission(UUID uuid, String permission) {
         if (uuid == null) return true;
         Player player = Bukkit.getServer().getPlayer(uuid);
         if (player != null) return player.hasPermission(permission);
         OfflinePlayer offPlayer = Bukkit.getServer().getOfflinePlayer(uuid);
-        return plugin.getPermission().playerHas((String)null, offPlayer, permission);
+        return plugin.getPermission().playerHas((String) null, offPlayer, permission);
     }
 
     @Override
     public boolean isOnline(UUID uuid) {
         return Bukkit.getServer().getPlayer(uuid) != null;
     }
-    
+
     @Override
     public String getTitle(UUID uuid) {
         if (uuid == null) throw new NullPointerException("UUID cannot be null");
         OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(uuid);
         if (plugin.getChat() == null) {
-            if (plugin.getPermission() != null) return plugin.getPermission().getPrimaryGroup((String)null, player);
+            if (plugin.getPermission() != null) return plugin.getPermission().getPrimaryGroup((String) null, player);
             return null;
         }
-        String prefix = plugin.getChat().getPlayerPrefix((String)null, player);
-        String suffix = plugin.getChat().getPlayerSuffix((String)null, player);
+        String prefix = plugin.getChat().getPlayerPrefix((String) null, player);
+        String suffix = plugin.getChat().getPlayerSuffix((String) null, player);
         if (prefix == null) prefix = "";
         if (suffix == null) suffix = "";
         return ChatColor.translateAlternateColorCodes('&', prefix + suffix);
@@ -92,13 +92,13 @@ class BukkitPlayerInfo extends PlayerInfo {
         OnlinePlayerInfo result = new OnlinePlayerInfo();
         final Location loc = player.getLocation();
         result.setLocation(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
-        result.setHealth((int)player.getHealth());
-        result.setMaxHealth((int)player.getMaxHealth());
+        result.setHealth((int) player.getHealth());
+        result.setMaxHealth((int) player.getMaxHealth());
         result.setFoodLevel(player.getFoodLevel());
-        result.setSaturation((int)player.getSaturation());
+        result.setSaturation((int) player.getSaturation());
         result.setExpLevel(player.getLevel());
-        result.setExpPerc((int)Math.round(player.getExp() * 100f));
-        result.setExp((int)(player.getExp() * (float)player.getExpToLevel()));
+        result.setExpPerc((int) Math.round(player.getExp() * 100f));
+        result.setExp((int) (player.getExp() * (float) player.getExpToLevel()));
         List<String> potionEffects = new ArrayList<>();
         for (PotionEffect effect : player.getActivePotionEffects()) {
             potionEffects.add(Strings.camelCase(effect.getType().getName()) + " " + (effect.getAmplifier() + 1));
@@ -111,5 +111,10 @@ class BukkitPlayerInfo extends PlayerInfo {
     @Override
     public String countryForIP(String ip) {
         return plugin.countryForIP(ip);
+    }
+
+    @Override
+    public void runSync(Runnable run) {
+        Bukkit.getScheduler().runTask(plugin, run);
     }
 }

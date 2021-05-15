@@ -13,24 +13,28 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="loginfos",
-       uniqueConstraints=@UniqueConstraint(columnNames={"player_id"}))
+@Table(name = "loginfos",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"player_id"}))
 @Getter
 @Setter
 public class LogInfoRow {
     private static final int PAGE_LENGTH = 10;
-    public static enum Data {
+    public enum Data {
         FIRST("First"),
         LAST("Last");
+
         public final String human;
-        Data(String human) { this.human = human; }
+
+        Data(final String human) {
+            this.human = human;
+        }
     }
-    
+
     @Id
     private Integer id;
 
     @Column(nullable = false)
-    @OneToOne(optional=false, fetch=FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private PlayerRow player;
 
     @Column(nullable = false)
@@ -77,10 +81,10 @@ public class LogInfoRow {
             result.setPlayer(player);
             result.setFirstLog(new Date());
             result.setLastLog(new Date());
-            DB.get().saveAsync(result, null);
+            DB.get().save(result);
         } else {
             result.setLastLog(new Date());
-            DB.get().saveAsync(result, null);
+            DB.get().save(result);
         }
         return result;
     }

@@ -1,5 +1,6 @@
 package com.winthier.playerinfo.sql;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,6 +28,14 @@ public class IgnoredIPRow {
 
     public static List<IgnoredIPRow> findAll() {
         return DB.get().find(IgnoredIPRow.class).findList();
+    }
+
+    public static List<String> findAllAsString() {
+        List<String> result = new ArrayList<>();
+        for (IgnoredIPRow row : IgnoredIPRow.findAll()) {
+            result.add(row.getIp().getIp());
+        }
+        return result;
     }
 
     public static IgnoredIPRow find(IPRow ip) {

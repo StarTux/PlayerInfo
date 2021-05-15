@@ -1,6 +1,13 @@
 package com.winthier.playerinfo;
 
-import com.winthier.playerinfo.sql.*;
+import com.winthier.playerinfo.sql.CountryRow;
+import com.winthier.playerinfo.sql.IPRow;
+import com.winthier.playerinfo.sql.IgnoredIPRow;
+import com.winthier.playerinfo.sql.LogInfoRow;
+import com.winthier.playerinfo.sql.OnTimeRow;
+import com.winthier.playerinfo.sql.PlayerCountryAndIPRow;
+import com.winthier.playerinfo.sql.PlayerIPRow;
+import com.winthier.playerinfo.sql.PlayerRow;
 import com.winthier.playerinfo.util.Players;
 import com.winthier.playerinfo.util.Strings;
 import com.winthier.sql.SQLDatabase;
@@ -20,12 +27,11 @@ public abstract class PlayerInfo {
     private PlayerInfoCommands commands = new PlayerInfoCommands(this);
     @Getter
     private PlayerInfoActions actions = new PlayerInfoActions(this);
-    private List<String> ignoredIPs = null;
 
     protected PlayerInfo() {
         instance = this;
     }
-    
+
     public abstract SQLDatabase getDatabase();
     public abstract String format(String msg, Object... args);
     public abstract boolean send(UUID uuid, String msg, Object... args);
@@ -35,8 +41,9 @@ public abstract class PlayerInfo {
     public abstract String getTitle(UUID uuid);
     public abstract OnlinePlayerInfo getOnlinePlayerInfo(UUID uuid);
     public abstract String countryForIP(String ip);
+    public abstract void runSync(Runnable run);
 
-    public List<UUID> findAltAccounts(UUID player) {
+    public final List<UUID> findAltAccounts(UUID player) {
         if (player == null) throw new NullPointerException("UUID cannot be null");
         // Fetch player row
         PlayerRow playerRow = PlayerRow.find(player);
@@ -45,8 +52,9 @@ public abstract class PlayerInfo {
         List<PlayerIPRow> playerIPRows = playerRow.getIps();
         if (playerIPRows == null) return Collections.<UUID>emptyList();
         List<IPRow> ips = new ArrayList<IPRow>();
+        List<String> ignoredIPList = IgnoredIPRow.findAllAsString();
         for (PlayerIPRow ip : playerIPRows) {
-            if (!getIgnoredIPs().contains(ip.getIp().getIp())) {
+            if (!ignoredIPList.contains(ip.getIp().getIp())) {
                 ips.add(ip.getIp());
             }
         }
@@ -63,53 +71,47 @@ public abstract class PlayerInfo {
         return new ArrayList<UUID>(result);
     }
 
-    public void onPlayerLogin(UUID uuid, String ip) {
+    public final void onPlayerLogin(UUID uuid, String ip) {
         if (uuid == null) throw new NullPointerException("UUID cannot be null");
         if (ip == null) throw new NullPointerException("IP cannot be null");
-        PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
-        if (!Strings.isIP(ip)) {
-            System.err.println("Received bad IP: " + ip);
-        } else {
-            IPRow ipRow = IPRow.findOrCreate(ip);
-            PlayerIPRow.findOrCreate(playerRow, ipRow);
-            if (!getIgnoredIPs().contains(ipRow.getIp())) {
-                String country = countryForIP(ipRow.getIp());
-                CountryRow countryRow = country == null ? null : CountryRow.findOrCreate(country);
-                PlayerCountryAndIPRow.updateOrCreate(playerRow, ipRow, countryRow);
-            }
-        }
-        LogInfoRow.updateOrCreate(playerRow);
-        if (!hasPermission(uuid, "playerinfo.hidden")) {
-            List<UUID> alts = findAltAccounts(uuid);
-            if (!alts.isEmpty()) {
-                String playerName = Players.getName(uuid);
-                announce("playerinfo.notify", "&8%s may also be: %s", playerName, Strings.join(Players.getNames(alts), ", "));
-            }
-        }
+        boolean hasHiddenPerm = hasPermission(uuid, "playerinfo.hidden");
+        String country = countryForIP(ip);
+        getDatabase().scheduleAsyncTask(() -> {
+                PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
+                if (!Strings.isIP(ip)) {
+                    System.err.println("Received bad IP: " + ip);
+                } else {
+                    IPRow ipRow = IPRow.findOrCreate(ip);
+                    PlayerIPRow.findOrCreate(playerRow, ipRow);
+                    List<String> ignoredIPList = IgnoredIPRow.findAllAsString();
+                    if (!ignoredIPList.contains(ipRow.getIp())) {
+                        CountryRow countryRow = country == null ? null : CountryRow.findOrCreate(country);
+                        PlayerCountryAndIPRow.updateOrCreate(playerRow, ipRow, countryRow);
+                    }
+                }
+                LogInfoRow.updateOrCreate(playerRow);
+                if (!hasHiddenPerm) {
+                    List<UUID> alts = findAltAccounts(uuid);
+                    if (!alts.isEmpty()) {
+                        runSync(() -> {
+                                String playerName = Players.getName(uuid);
+                                announce("playerinfo.notify", "&8%s may also be: %s", playerName, Strings.join(Players.getNames(alts), ", "));
+                            });
+                    }
+                }
+            });
     }
 
-    public void onTimePassed(List<UUID> onlinePlayers, int seconds) {
-        for (UUID uuid : onlinePlayers) {
-            PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
-            OnTimeRow.updateOrCreate(playerRow, seconds);
-        }
+    public final void onTimePassed(List<UUID> onlinePlayers, int seconds) {
+        getDatabase().scheduleAsyncTask(() -> {
+                for (UUID uuid : onlinePlayers) {
+                    PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
+                    OnTimeRow.updateOrCreate(playerRow, seconds);
+                }
+            });
     }
 
-    public List<String> getIgnoredIPs() {
-        if (ignoredIPs == null) {
-            ignoredIPs = new ArrayList<String>();
-            for (IgnoredIPRow row : IgnoredIPRow.findAll()) {
-                ignoredIPs.add(row.getIp().getIp());
-            }
-        }
-        return ignoredIPs;
-    }
-
-    void flushIgnoredIPs() {
-        ignoredIPs = null;
-    }
-
-    public long getOnTime(UUID uuid) {
+    public final long getOnTime(UUID uuid) {
         PlayerRow playerRow = PlayerRow.find(uuid);
         if (playerRow == null) return 0L;
         OnTimeRow onTimeRow = playerRow.getOnTime();
@@ -117,7 +119,7 @@ public abstract class PlayerInfo {
         return onTimeRow.getSeconds();
     }
 
-    public Date getFirstLog(UUID uuid) {
+    public final Date getFirstLog(UUID uuid) {
         PlayerRow playerRow = PlayerRow.find(uuid);
         if (playerRow == null) return null;
         LogInfoRow logInfoRow = playerRow.getLogInfo();
@@ -125,7 +127,7 @@ public abstract class PlayerInfo {
         return logInfoRow.getFirstLog();
     }
 
-    public Date getLastLog(UUID uuid) {
+    public final Date getLastLog(UUID uuid) {
         PlayerRow playerRow = PlayerRow.find(uuid);
         if (playerRow == null) return null;
         LogInfoRow logInfoRow = playerRow.getLogInfo();

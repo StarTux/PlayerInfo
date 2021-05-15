@@ -12,18 +12,18 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="ontimes",
-       uniqueConstraints=@UniqueConstraint(columnNames={"player_id"}))
+@Table(name = "ontimes",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"player_id"}))
 @Getter
 @Setter
 public class OnTimeRow {
     private static final int PAGE_LENGTH = 10;
-    
+
     @Id
     private Integer id;
 
     @Column(nullable = false)
-    @OneToOne(optional=false, fetch=FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private PlayerRow player;
 
     @Column(nullable = false)
@@ -57,17 +57,16 @@ public class OnTimeRow {
         return result;
     }
 
-    public static OnTimeRow updateOrCreate(PlayerRow player, int seconds) {
+    public static void updateOrCreate(PlayerRow player, int seconds) {
         OnTimeRow result = find(player);
         if (result == null) {
             result = new OnTimeRow();
             result.setPlayer(player);
-            result.setSeconds(60);
-            DB.get().saveAsync(result, null);
+            result.setSeconds(seconds);
+            DB.get().insert(result);
         } else {
             result.setSeconds(result.getSeconds() + seconds);
-            DB.get().saveAsync(result, null);
+            DB.get().update(result, "seconds");
         }
-        return result;
     }
 }

@@ -1,6 +1,5 @@
 package com.winthier.playerinfo.sql;
 
-import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -13,8 +12,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="player_countries",
-       uniqueConstraints=@UniqueConstraint(columnNames={"player_id"}))
+@Table(name = "player_countries",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"player_id"}))
 @Getter
 @Setter
 public class PlayerCountryAndIPRow {
@@ -22,7 +21,7 @@ public class PlayerCountryAndIPRow {
     private Integer id;
 
     @Column(nullable = false)
-    @OneToOne(fetch=FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private PlayerRow player;
 
     @ManyToOne
@@ -54,10 +53,14 @@ public class PlayerCountryAndIPRow {
         if (result == null) {
             result = new PlayerCountryAndIPRow();
             result.setPlayer(player);
+            if (ip != null) result.setIp(ip);
+            if (country != null) result.setCountry(country);
+            DB.get().insert(result);
+        } else {
+            if (ip != null) result.setIp(ip);
+            if (country != null) result.setCountry(country);
+            DB.get().update("ip", "country");
         }
-        if (ip != null) result.setIp(ip);
-        if (country != null) result.setCountry(country);
-        DB.get().saveAsync(result, null);
         return result;
     }
 }
