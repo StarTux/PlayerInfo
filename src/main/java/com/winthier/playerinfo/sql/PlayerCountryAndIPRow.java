@@ -59,7 +59,7 @@ public class PlayerCountryAndIPRow {
         } else {
             if (ip != null) result.setIp(ip);
             if (country != null) result.setCountry(country);
-            DB.get().update("ip", "country");
+            DB.get().update(result, "ip", "country");
         }
         return result;
     }
