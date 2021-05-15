@@ -1,6 +1,7 @@
 package com.winthier.playerinfo;
 
 import com.winthier.playerinfo.sql.CountryRow;
+import com.winthier.playerinfo.sql.DailyOnTimeRow;
 import com.winthier.playerinfo.sql.IPRow;
 import com.winthier.playerinfo.sql.IgnoredIPRow;
 import com.winthier.playerinfo.sql.LogInfoRow;
@@ -11,6 +12,10 @@ import com.winthier.playerinfo.sql.PlayerRow;
 import com.winthier.playerinfo.util.Players;
 import com.winthier.playerinfo.util.Strings;
 import com.winthier.sql.SQLDatabase;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -102,11 +107,24 @@ public abstract class PlayerInfo {
             });
     }
 
+    public final int getDayId() {
+        final Instant instant = Instant.now();
+        final LocalDateTime localDateTime = LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
+        final LocalDate localDate = localDateTime.toLocalDate();
+        final int year = localDate.getYear();
+        final int month = localDate.getMonth().getValue();
+        final int day = localDate.getDayOfMonth();
+        final int dayId = year * 10000 + month * 100 + day;
+        return dayId;
+    }
+
     public final void onTimePassed(List<UUID> onlinePlayers, int seconds) {
+        final int dayId = getDayId();
         getDatabase().scheduleAsyncTask(() -> {
                 for (UUID uuid : onlinePlayers) {
                     PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
                     OnTimeRow.updateOrCreate(playerRow, seconds);
+                    DailyOnTimeRow.updateOrCreate(playerRow, dayId, seconds);
                 }
             });
     }

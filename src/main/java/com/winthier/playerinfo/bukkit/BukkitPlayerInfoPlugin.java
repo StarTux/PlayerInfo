@@ -3,16 +3,21 @@ package com.winthier.playerinfo.bukkit;
 import com.maxmind.geoip.LookupService;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.PlayerInfoCommands;
-import com.winthier.playerinfo.sql.*;
-import com.winthier.sql.SQLDatabase;
+import com.winthier.playerinfo.sql.CountryRow;
+import com.winthier.playerinfo.sql.DailyOnTimeRow;
+import com.winthier.playerinfo.sql.IPRow;
+import com.winthier.playerinfo.sql.IgnoredIPRow;
+import com.winthier.playerinfo.sql.LogInfoRow;
+import com.winthier.playerinfo.sql.OnTimeRow;
+import com.winthier.playerinfo.sql.PlayerCountryAndIPRow;
+import com.winthier.playerinfo.sql.PlayerIPRow;
+import com.winthier.playerinfo.sql.PlayerRow;
 import com.winthier.sql.SQLDatabase;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
-import javax.persistence.PersistenceException;
 import lombok.Getter;
 import net.milkbowl.vault.chat.Chat;
 import net.milkbowl.vault.permission.Permission;
@@ -20,15 +25,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
-public class BukkitPlayerInfoPlugin extends JavaPlugin {
-    private final int ON_TIME_SECONDS = 60;
-    private final int TPS = 20;
+public final class BukkitPlayerInfoPlugin extends JavaPlugin {
+    private static final int ON_TIME_SECONDS = 60;
+    private static final int TPS = 20;
     private BukkitPlayerInfo info;
     private Chat chat;
     private Permission permission;
@@ -36,7 +40,7 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     private BukkitRunnable onTimeTask;
     private LookupService geoip;
     private SQLDatabase db;
-    
+
     private boolean setupChat() {
         RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
         if (chatProvider != null) chat = chatProvider.getProvider();
@@ -58,6 +62,7 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
                           IgnoredIPRow.class,
                           LogInfoRow.class,
                           OnTimeRow.class,
+                          DailyOnTimeRow.class,
                           PlayerCountryAndIPRow.class,
                           PlayerIPRow.class,
                           PlayerRow.class);
@@ -84,7 +89,7 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String args[]) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         return false;
     }
 
@@ -128,24 +133,24 @@ public class BukkitPlayerInfoPlugin extends JavaPlugin {
 
 class MyCommand implements CommandExecutor {
     private final Method method;
-    
-    MyCommand(String name) {
+
+    MyCommand(final String name) {
         PlayerInfoCommands commands = PlayerInfo.getInstance().getCommands();
-        Method method = null;
+        Method theMethod = null;
         try {
-            method = commands.getClass().getMethod(name, UUID.class, String[].class);
+            theMethod = commands.getClass().getMethod(name, UUID.class, String[].class);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        this.method = method;
+        this.method = theMethod;
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String args[]) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         if (method == null) return false;
-        final UUID uuid = sender instanceof Player ? ((Player)sender).getUniqueId() : null;
+        final UUID uuid = sender instanceof Player ? ((Player) sender).getUniqueId() : null;
         try {
-            return (boolean)method.invoke(PlayerInfo.getInstance().getCommands(), uuid, args);
+            return (boolean) method.invoke(PlayerInfo.getInstance().getCommands(), uuid, args);
         } catch (Exception e) {
             e.printStackTrace();
             return false;
