@@ -12,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -93,7 +94,7 @@ class BukkitPlayerInfo extends PlayerInfo {
         final Location loc = player.getLocation();
         result.setLocation(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         result.setHealth((int) player.getHealth());
-        result.setMaxHealth((int) player.getMaxHealth());
+        result.setMaxHealth((int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
         result.setFoodLevel(player.getFoodLevel());
         result.setSaturation((int) player.getSaturation());
         result.setExpLevel(player.getLevel());
