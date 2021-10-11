@@ -13,7 +13,7 @@
   <repositories>
     <!-- Cavetale Repo -->
     <repository>
-      <id>cavetale-repo</id>
+      <id>cavetale</id>
       <url>https://cavetale.com/jenkins/plugin/repository/everything/</url>
     </repository>
     <!-- Paper Repo -->
