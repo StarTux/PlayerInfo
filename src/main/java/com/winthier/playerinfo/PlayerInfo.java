@@ -1,5 +1,6 @@
 package com.winthier.playerinfo;
 
+import com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin;
 import com.winthier.playerinfo.sql.CountryRow;
 import com.winthier.playerinfo.sql.DailyOnTimeRow;
 import com.winthier.playerinfo.sql.IPRow;
@@ -23,9 +24,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Consumer;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 
 public abstract class PlayerInfo {
+    protected final BukkitPlayerInfoPlugin plugin;
     @Getter
     private static PlayerInfo instance;
     @Getter
@@ -33,8 +37,9 @@ public abstract class PlayerInfo {
     @Getter
     private PlayerInfoActions actions = new PlayerInfoActions(this);
 
-    protected PlayerInfo() {
+    protected PlayerInfo(final BukkitPlayerInfoPlugin plugin) {
         instance = this;
+        this.plugin = plugin;
     }
 
     public abstract SQLDatabase getDatabase();
@@ -151,5 +156,19 @@ public abstract class PlayerInfo {
         LogInfoRow logInfoRow = playerRow.getLogInfo();
         if (logInfoRow == null) return null;
         return logInfoRow.getLastLog();
+    }
+
+    public final void lastLog(UUID uuid, Consumer<Date> callback) {
+        getDatabase().scheduleAsyncTask(() -> {
+                PlayerRow playerRow = getDatabase().find(PlayerRow.class).eq("uuid", uuid).findUnique();
+                LogInfoRow logInfoRow = playerRow != null
+                    ? getDatabase().find(LogInfoRow.class).eq("player", playerRow).findUnique()
+                    : null;
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                        callback.accept(logInfoRow != null
+                                        ? logInfoRow.getLastLog()
+                                        : new Date(0L));
+                    });
+            });
     }
 }

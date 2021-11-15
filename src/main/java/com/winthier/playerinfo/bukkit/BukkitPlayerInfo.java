@@ -7,7 +7,6 @@ import com.winthier.sql.SQLDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -17,9 +16,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
-@RequiredArgsConstructor
 class BukkitPlayerInfo extends PlayerInfo {
-    private final BukkitPlayerInfoPlugin plugin;
+    protected BukkitPlayerInfo(final BukkitPlayerInfoPlugin plugin) {
+        super(plugin);
+    }
 
     @Override
     public SQLDatabase getDatabase() {
