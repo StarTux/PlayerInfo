@@ -2,7 +2,6 @@ package com.winthier.playerinfo;
 
 import com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin;
 import com.winthier.playerinfo.sql.CountryRow;
-import com.winthier.playerinfo.sql.DailyOnTimeRow;
 import com.winthier.playerinfo.sql.IPRow;
 import com.winthier.playerinfo.sql.IgnoredIPRow;
 import com.winthier.playerinfo.sql.LogInfoRow;
@@ -129,7 +128,6 @@ public abstract class PlayerInfo {
                 for (UUID uuid : onlinePlayers) {
                     PlayerRow playerRow = PlayerRow.findOrCreate(uuid);
                     OnTimeRow.updateOrCreate(playerRow, seconds);
-                    DailyOnTimeRow.updateOrCreate(playerRow, dayId, seconds);
                 }
             });
     }
@@ -140,6 +138,16 @@ public abstract class PlayerInfo {
         OnTimeRow onTimeRow = playerRow.getOnTime();
         if (onTimeRow == null) return 0L;
         return onTimeRow.getSeconds();
+    }
+
+    public final boolean setOnTime(UUID uuid, int seconds) {
+        PlayerRow playerRow = PlayerRow.find(uuid);
+        if (playerRow == null) return false;
+        OnTimeRow onTimeRow = playerRow.getOnTime();
+        if (onTimeRow == null) return false;
+        onTimeRow.setSeconds(seconds);
+        plugin.getDb().save(onTimeRow);
+        return true;
     }
 
     public final Date getFirstLog(UUID uuid) {

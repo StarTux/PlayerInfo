@@ -4,7 +4,7 @@
   <groupId>com.winthier.playerinfo</groupId>
   <artifactId>playerinfo</artifactId>
   <packaging>jar</packaging>
-  <version>0.1-SNAPSHOT</version>
+  <version>1.12.2-SNAPSHOT</version>
   <name>PlayerInfo</name>
   <url>https://cavetale.com</url>
   <properties>
@@ -12,30 +12,22 @@
   </properties>
   <repositories>
 
-    <!-- Cavetale Repo -->
     <repository>
-      <id>cavetale</id>
-      <url>https://cavetale.com/jenkins/plugin/repository/everything/</url>
-    </repository>
-
-    <!-- Paper Repo -->
-    <repository>
-      <id>papermc</id>
-      <url>https://papermc.io/repo/repository/maven-public/</url>
+        <id>spigot-repo</id>
+        <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
 
   </repositories>
   <dependencies>
 
-    <!-- Paper API -->
     <dependency>
-      <groupId>io.papermc.paper</groupId>
-      <artifactId>paper-api</artifactId>
-      <version>1.17.1-R0.1-SNAPSHOT</version>
+      <groupId>org.spigotmc</groupId>
+      <artifactId>spigot-api</artifactId>
+      <version>1.12.2-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
-    <!-- Lombok -->
+   <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -54,14 +46,14 @@
     <dependency>
       <groupId>com.winthier.playercache</groupId>
       <artifactId>playercache</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>1.12.2-SNAPSHOT</version>
     </dependency>
 
     <!-- SQL -->
     <dependency>
       <groupId>com.winthier.sql</groupId>
       <artifactId>sql</artifactId>
-      <version>0.1-SNAPSHOT</version>
+      <version>1.12.2-SNAPSHOT</version>
     </dependency>
 
     <!-- Vault -->
@@ -82,8 +74,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.2</version>
         <configuration>
-          <source>16</source>
-          <target>16</target>
+          <source>1.8</source>
+          <target>1.8</target>
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
           <compilerArgs>

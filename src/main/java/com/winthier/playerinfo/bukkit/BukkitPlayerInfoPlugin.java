@@ -4,7 +4,6 @@ import com.maxmind.geoip.LookupService;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.PlayerInfoCommands;
 import com.winthier.playerinfo.sql.CountryRow;
-import com.winthier.playerinfo.sql.DailyOnTimeRow;
 import com.winthier.playerinfo.sql.IPRow;
 import com.winthier.playerinfo.sql.IgnoredIPRow;
 import com.winthier.playerinfo.sql.LogInfoRow;
@@ -62,7 +61,6 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
                           IgnoredIPRow.class,
                           LogInfoRow.class,
                           OnTimeRow.class,
-                          DailyOnTimeRow.class,
                           PlayerCountryAndIPRow.class,
                           PlayerIPRow.class,
                           PlayerRow.class);
