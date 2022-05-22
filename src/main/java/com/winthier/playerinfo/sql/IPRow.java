@@ -1,25 +1,17 @@
 package com.winthier.playerinfo.sql;
 
-import java.util.List;
-import javax.persistence.CascadeType;
+import com.winthier.sql.SQLRow;
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name="ips",
-       uniqueConstraints=@UniqueConstraint(columnNames={"ip"}))
-@Getter
-@Setter
-public class IPRow {
+@Table(name = "ips",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"ip"}))
+@Getter @Setter
+public class IPRow implements SQLRow {
     @Id
     private Integer id;
 

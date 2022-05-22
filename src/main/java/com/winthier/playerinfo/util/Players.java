@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Players {
+public final class Players {
     public static String getName(UUID uuid) {
         if (uuid == null) throw new NullPointerException("UUID cannot be null");
         String result = PlayerCache.nameForUuid(uuid);
@@ -33,4 +33,6 @@ public class Players {
         for (String name : names) result.add(getUuid(name));
         return result;
     }
+
+    private Players() { }
 }

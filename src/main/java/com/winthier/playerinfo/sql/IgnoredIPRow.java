@@ -1,10 +1,9 @@
 package com.winthier.playerinfo.sql;
 
+import com.winthier.sql.SQLRow;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -13,17 +12,16 @@ import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name="ignored_ips",
-       uniqueConstraints=@UniqueConstraint(columnNames={"ip_id"}))
+@Table(name = "ignored_ips",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"ip_id"}))
 @Getter
 @Setter
-public class IgnoredIPRow {
+public class IgnoredIPRow implements SQLRow {
     @Id
     private Integer id;
 
     @Column(nullable = false)
-    @OneToOne(optional=false, fetch=FetchType.LAZY)
+    @OneToOne(optional = false, fetch = FetchType.LAZY)
     private IPRow ip;
 
     public static List<IgnoredIPRow> findAll() {

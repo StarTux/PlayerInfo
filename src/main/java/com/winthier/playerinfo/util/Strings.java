@@ -6,14 +6,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class Strings {
+public final class Strings {
     private static final int DAYS_PER_YEAR = 365;
     private static final int DAYS_PER_MONTH = 30;
-    private static final DateFormat formatDateFormat = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
+    private static final DateFormat FORMAT_DATE_FORMAT = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
     private static final Pattern IP_PATTERN = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
 
     public static String formatDate(Date date) {
-        return formatDateFormat.format(date);
+        return FORMAT_DATE_FORMAT.format(date);
     }
 
     public static String formatSeconds(final long seconds) {
@@ -69,4 +69,6 @@ public class Strings {
     public static boolean isIP(String ip) {
         return IP_PATTERN.matcher(ip).matches();
     }
+
+    private Strings() { }
 }

@@ -1,8 +1,8 @@
 package com.winthier.playerinfo.sql;
 
+import com.winthier.sql.SQLRow;
 import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
@@ -11,12 +11,11 @@ import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
 @Table(name = "ontimes",
        uniqueConstraints = @UniqueConstraint(columnNames = {"player_id"}))
 @Getter
 @Setter
-public class OnTimeRow {
+public class OnTimeRow implements SQLRow {
     private static final int PAGE_LENGTH = 10;
 
     @Id

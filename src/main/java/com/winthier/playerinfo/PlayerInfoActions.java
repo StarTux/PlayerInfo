@@ -1,7 +1,13 @@
 package com.winthier.playerinfo;
 
-import com.winthier.playercache.PlayerCache;
-import com.winthier.playerinfo.sql.*;
+import com.winthier.playerinfo.sql.CountryRow;
+import com.winthier.playerinfo.sql.IPRow;
+import com.winthier.playerinfo.sql.IgnoredIPRow;
+import com.winthier.playerinfo.sql.LogInfoRow;
+import com.winthier.playerinfo.sql.OnTimeRow;
+import com.winthier.playerinfo.sql.PlayerCountryAndIPRow;
+import com.winthier.playerinfo.sql.PlayerIPRow;
+import com.winthier.playerinfo.sql.PlayerRow;
 import com.winthier.playerinfo.util.Players;
 import com.winthier.playerinfo.util.Strings;
 import java.util.ArrayList;
@@ -17,10 +23,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 @RequiredArgsConstructor
-public class PlayerInfoActions {
+public final class PlayerInfoActions {
     private final PlayerInfo info;
 
-    void loginfo(UUID sender, UUID player) {
+    protected void loginfo(UUID sender, UUID player) {
         if (player == null) throw new NullPointerException("Player cannot be null");
         PlayerRow playerRow = PlayerRow.find(player);
         if (playerRow == null) throw new PlayerInfoException("No data for player");
@@ -28,8 +34,12 @@ public class PlayerInfoActions {
         if (logInfoRow == null) throw new PlayerInfoException("No data for player");
         String playerName = Players.getName(player);
         info.send(sender, "&3Log Info for &b%s", playerName);
-        info.send(sender, "&3 First login: &b%s &3(%s ago)", Strings.formatDate(logInfoRow.getFirstLog()), Strings.formatTimeDiffToNow(logInfoRow.getFirstLog()));
-        info.send(sender, "&3 Last login: &b%s &3(%s ago)", Strings.formatDate(logInfoRow.getLastLog()), Strings.formatTimeDiffToNow(logInfoRow.getLastLog()));
+        info.send(sender, "&3 First login: &b%s &3(%s ago)",
+                  Strings.formatDate(logInfoRow.getFirstLog()),
+                  Strings.formatTimeDiffToNow(logInfoRow.getFirstLog()));
+        info.send(sender, "&3 Last login: &b%s &3(%s ago)",
+                  Strings.formatDate(logInfoRow.getLastLog()),
+                  Strings.formatTimeDiffToNow(logInfoRow.getLastLog()));
     }
 
     private void rankLogs(UUID sender, LogInfoRow.Data data, int page) {
@@ -49,7 +59,7 @@ public class PlayerInfoActions {
         }
     }
 
-    void status(UUID sender, UUID player) {
+    protected void status(UUID sender, UUID player) {
         PlayerRow playerRow = PlayerRow.find(player);
         if (playerRow == null) throw new PlayerInfoException("Nothing found");
         String playerName = Players.getName(player);
@@ -61,8 +71,12 @@ public class PlayerInfoActions {
             info.send(sender, " &3Title: [%s&3]", title);
         }
         if (logInfoRow != null) {
-            info.send(sender, " &3First seen: &b%s &3(%s ago)", Strings.formatDate(logInfoRow.getFirstLog()), Strings.formatTimeDiffToNow(logInfoRow.getFirstLog()));
-            info.send(sender, " &3Last seen: &b%s &3(%s ago)", Strings.formatDate(logInfoRow.getLastLog()), Strings.formatTimeDiffToNow(logInfoRow.getLastLog()));
+            info.send(sender, " &3First seen: &b%s &3(%s ago)",
+                      Strings.formatDate(logInfoRow.getFirstLog()),
+                      Strings.formatTimeDiffToNow(logInfoRow.getFirstLog()));
+            info.send(sender, " &3Last seen: &b%s &3(%s ago)",
+                      Strings.formatDate(logInfoRow.getLastLog()),
+                      Strings.formatTimeDiffToNow(logInfoRow.getLastLog()));
         }
         OnTimeRow onTimeRow = playerRow.getOnTime();
         if (onTimeRow != null) {
@@ -99,15 +113,15 @@ public class PlayerInfoActions {
         }
     }
 
-    void firstlog(UUID sender, int page) {
+    protected void firstlog(UUID sender, int page) {
         rankLogs(sender, LogInfoRow.Data.FIRST, page);
     }
 
-    void lastlog(UUID sender, int page) {
+    protected void lastlog(UUID sender, int page) {
         rankLogs(sender, LogInfoRow.Data.LAST, page);
     }
 
-    void ontime(UUID sender, UUID player) {
+    protected void ontime(UUID sender, UUID player) {
         if (player == null) throw new NullPointerException("Player cannot be null");
         PlayerRow playerRow = PlayerRow.find(player);
         if (playerRow == null) throw new PlayerInfoException("Nothing found");
@@ -118,7 +132,7 @@ public class PlayerInfoActions {
         info.send(sender, " &b%s", Strings.formatSeconds(onTimeRow.getSeconds()));
     }
 
-    void rankOntimes(UUID sender, int page) {
+    protected void rankOntimes(UUID sender, int page) {
         List<OnTimeRow> rows = OnTimeRow.rankOntimes(page);
         if (rows.isEmpty()) throw new PlayerInfoException("Nothing found");
         int count = OnTimeRow.countPages();
@@ -131,18 +145,18 @@ public class PlayerInfoActions {
         }
     }
 
-    void listIgnoredIPs(UUID sender) {
+    protected void listIgnoredIPs(UUID sender) {
         info.send(sender, "&3Ignored IPs: &b%s", Strings.join(IgnoredIPRow.findAllAsString(), ", "));
     }
 
-    void addIgnoredIP(UUID sender, String ip) {
+    protected void addIgnoredIP(UUID sender, String ip) {
         if (!Strings.isIP(ip)) throw new PlayerInfoException("Bad IP: " + ip);
         IPRow ipRow = IPRow.findOrCreate(ip);
         IgnoredIPRow.findOrCreate(ipRow);
         info.send(sender, "&3IP ignored: &b%s", ip);
     }
 
-    void removeIgnoredIP(UUID sender, String ip) {
+    protected void removeIgnoredIP(UUID sender, String ip) {
         if (!Strings.isIP(ip)) throw new PlayerInfoException("Bad IP: " + ip);
         IPRow ipRow = IPRow.find(ip);
         if (ipRow == null) throw new PlayerInfoException("Unknown IP: " + ip);
@@ -150,7 +164,7 @@ public class PlayerInfoActions {
         info.send(sender, "&3IP no longer ignored: &b%s", ip);
     }
 
-    void listPlayerIPs(UUID sender, UUID player) {
+    protected void listPlayerIPs(UUID sender, UUID player) {
         PlayerRow playerRow = PlayerRow.find(player);
         if (playerRow == null) throw new PlayerInfoException("Nothing found");
         List<PlayerIPRow> playerIPRows = playerRow.getIps();
@@ -164,7 +178,7 @@ public class PlayerInfoActions {
         }
     }
 
-    void findSharedIPs(UUID sender, List<UUID> players) {
+    protected void findSharedIPs(UUID sender, List<UUID> players) {
         List<PlayerRow> playerRows = PlayerRow.findAll(players);
         if (playerRows.isEmpty()) throw new PlayerInfoException("Nothing found");
         List<String> ips = new LinkedList<String>();
@@ -188,14 +202,14 @@ public class PlayerInfoActions {
         }
     }
 
-    void listAltIPs(UUID sender, UUID player) {
+    protected void listAltIPs(UUID sender, UUID player) {
         List<UUID> alts = info.findAltAccounts(player);
         if (alts.isEmpty()) throw new PlayerInfoException("Nothing found");
         alts.add(player);
         findSharedIPs(sender, alts);
     }
 
-    void onlineCountries(UUID sender) {
+    protected void onlineCountries(UUID sender) {
         Map<String, Integer> stats = new HashMap<>();
         Map<String, List<String>> names = new HashMap<>();
         for (Player player: Bukkit.getServer().getOnlinePlayers()) {

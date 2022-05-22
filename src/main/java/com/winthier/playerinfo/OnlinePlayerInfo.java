@@ -4,17 +4,25 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class OnlinePlayerInfo {
+public final class OnlinePlayerInfo {
     private String world;
-    private int x, y, z;
-    private int health, maxHealth, foodLevel, saturation, exp, expPerc, expLevel;
+    private int x;
+    private int y;
+    private int z;
+    private int health;
+    private int maxHealth;
+    private int foodLevel;
+    private int saturation;
+    private int exp;
+    private int expPerc;
+    private int expLevel;
     private List<String> potionEffects;
     private String gameMode;
 
-    public void setLocation(String world, int x, int y, int z) {
-        this.world = world;
-        this.x = x;
-        this.y = y;
-        this.z = z;
+    public void setLocation(String newWorld, int newX, int newY, int newZ) {
+        this.world = newWorld;
+        this.x = newX;
+        this.y = newY;
+        this.z = newZ;
     }
 }

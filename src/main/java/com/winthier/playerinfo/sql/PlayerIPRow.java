@@ -1,8 +1,8 @@
 package com.winthier.playerinfo.sql;
 
+import com.winthier.sql.SQLRow;
 import java.util.List;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
@@ -11,17 +11,16 @@ import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name="player_ips",
-       uniqueConstraints=@UniqueConstraint(columnNames={"player_id", "ip_id"}))
+@Table(name = "player_ips",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"player_id", "ip_id"}))
 @Getter
 @Setter
-public class PlayerIPRow {
+public class PlayerIPRow implements SQLRow {
     @Id
     private Integer id;
 
     @Column(nullable = false)
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private PlayerRow player;
 
     @Column(nullable = false)

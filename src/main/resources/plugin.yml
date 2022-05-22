@@ -1,12 +1,17 @@
+main: com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin
 name: PlayerInfo
+
+version: 0.1
+api-version: 1.18
+
 description: Store some information about players
 author: StarTux
-version: 0.1
-api-version: 1.13
+
 website: https://cavetale.com
-main: com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin
 depend: [ SQL, PlayerCache, Vault ]
+
 commands:
+
   playerinfo:
     description: Admin interface
     permission: playerinfo.playerinfo
@@ -25,6 +30,7 @@ commands:
   ontime:
     description: List player online time
     permission: playerinfo.ontime
+
 permissions:
   playerinfo.playerinfo:
     description: Use /playerinfo

@@ -1,20 +1,19 @@
 package com.winthier.playerinfo.sql;
 
+import com.winthier.sql.SQLRow;
 import javax.persistence.Column;
-import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import lombok.Getter;
 import lombok.Setter;
 
-@Entity
-@Table(name="countries",
-       uniqueConstraints=@UniqueConstraint(columnNames={"country"}))
-@Getter
-@Setter
-public class CountryRow {
-    public final static int LENGTH = 40;
+@Table(name = "countries",
+       uniqueConstraints = @UniqueConstraint(columnNames = {"country"}))
+@Getter @Setter
+public class CountryRow implements SQLRow {
+    public static final int LENGTH = 40;
+
     @Id
     private Integer id;
 

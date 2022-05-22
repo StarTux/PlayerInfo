@@ -6,7 +6,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class PlayerInfoCommands {
+public final class PlayerInfoCommands {
     private final PlayerInfo info;
 
     private boolean loginfoPrivate(UUID sender, String[] args) {
@@ -97,8 +97,7 @@ public class PlayerInfoCommands {
     private boolean playerinfoPrivate(UUID sender, String[] args) {
         if (args.length == 0) return false;
         String firstArg = args[0];
-        if (false) {
-        } else if (args.length >= 2 && firstArg.equalsIgnoreCase("IgnoredIPs")) {
+        if (args.length >= 2 && firstArg.equalsIgnoreCase("IgnoredIPs")) {
             return playerinfoIgnoredIPs(sender, Arrays.copyOfRange(args, 1, args.length));
         } else if (args.length == 2 && firstArg.equalsIgnoreCase("ListIPs")) {
             return playerinfoListIPs(sender, Arrays.copyOfRange(args, 1, args.length));
@@ -112,7 +111,6 @@ public class PlayerInfoCommands {
         } else {
             return false;
         }
-        return true;
     }
 
     public boolean playerinfo(UUID sender, String[] args) {
@@ -158,32 +156,36 @@ public class PlayerInfoCommands {
     }
 
     public boolean firstlog(UUID sender, String[] args) {
-        int page = 0;
-        if (args.length == 0) {
-        } else if (args.length == 1) {
+        if (args.length > 1) return false;
+        final int page;
+        if (args.length >= 1) {
             String pageArg = args[0];
             try {
                 page = Integer.parseInt(pageArg) - 1;
             } catch (NumberFormatException nfe) {
-                page = -1;
+                throw new PlayerInfoException("Invalid page number: " + pageArg);
             }
-            if (page < 0) throw new PlayerInfoException("Page number expected, got: " + pageArg);
+            if (page < 0) throw new PlayerInfoException("Illegal page number: " + page);
+        } else {
+            page = 0;
         }
         info.getActions().firstlog(sender, page);
         return true;
     }
 
     public boolean lastlog(UUID sender, String[] args) {
-        int page = 0;
-        if (args.length == 0) {
-        } else if (args.length == 1) {
+        if (args.length > 1) return false;
+        final int page;
+        if (args.length >= 1) {
             String pageArg = args[0];
             try {
                 page = Integer.parseInt(pageArg) - 1;
             } catch (NumberFormatException nfe) {
-                page = -1;
+                throw new PlayerInfoException("Invalid page number: " + pageArg);
             }
-            if (page < 0) throw new PlayerInfoException("Page number expected, got: " + pageArg);
+            if (page < 0) throw new PlayerInfoException("Illegal page number: " + page);
+        } else {
+            page = 0;
         }
         info.getActions().lastlog(sender, page);
         return true;
