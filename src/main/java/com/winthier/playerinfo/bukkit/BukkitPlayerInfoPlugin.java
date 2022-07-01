@@ -57,15 +57,15 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
     public void onEnable() {
         this.info = new BukkitPlayerInfo(this);
         db = new SQLDatabase(this);
-        db.registerTables(CountryRow.class,
-                          IPRow.class,
-                          IgnoredIPRow.class,
-                          LogInfoRow.class,
-                          OnTimeRow.class,
-                          DailyOnTimeRow.class,
-                          PlayerCountryAndIPRow.class,
-                          PlayerIPRow.class,
-                          PlayerRow.class);
+        db.registerTables(List.of(CountryRow.class,
+                                  IPRow.class,
+                                  IgnoredIPRow.class,
+                                  LogInfoRow.class,
+                                  OnTimeRow.class,
+                                  DailyOnTimeRow.class,
+                                  PlayerCountryAndIPRow.class,
+                                  PlayerIPRow.class,
+                                  PlayerRow.class));
         if (!db.createAllTables()) {
             getLogger().warning("Database setup failed. Disabling " + getDescription().getName());
             getServer().getPluginManager().disablePlugin(this);
@@ -81,6 +81,9 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
             }
         };
         onTimeTask.runTaskTimer(this, ON_TIME_SECONDS * TPS, ON_TIME_SECONDS * TPS);
+        if (getGeoIP() == null) {
+            getLogger().severe("GeoIP not found!");
+        }
     }
 
     @Override
@@ -115,8 +118,15 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
 
     LookupService getGeoIP() {
         if (geoip == null) {
+            File file = new File("/home/mc/config/PlayerInfo/GeoIP.dat");
+            if (!file.exists()) {
+                file = new File(getDataFolder(), "GeoIP.dat");
+            }
+            if (!file.exists()) {
+                return null;
+            }
             try {
-                geoip = new LookupService(new File(getDataFolder(), "GeoIP.dat"), LookupService.GEOIP_MEMORY_CACHE);
+                geoip = new LookupService(file, LookupService.GEOIP_MEMORY_CACHE);
             } catch (Exception e) {
                 e.printStackTrace();
             }
