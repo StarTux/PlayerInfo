@@ -19,38 +19,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
-import net.milkbowl.vault.chat.Chat;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 @Getter
 public final class BukkitPlayerInfoPlugin extends JavaPlugin {
+    private static BukkitPlayerInfoPlugin instance;
     private static final int ON_TIME_SECONDS = 60;
     private static final int TPS = 20;
     private BukkitPlayerInfo info;
-    private Chat chat;
-    private Permission permission;
     private final BukkitEventHandler eventHandler = new BukkitEventHandler(this);
     private BukkitRunnable onTimeTask;
     private LookupService geoip;
     private SQLDatabase db;
 
-    private boolean setupChat() {
-        RegisteredServiceProvider<Chat> chatProvider = getServer().getServicesManager().getRegistration(Chat.class);
-        if (chatProvider != null) chat = chatProvider.getProvider();
-        return (chat != null);
-    }
-
-    private boolean setupPermission() {
-        RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(Permission.class);
-        if (permissionProvider != null) permission = permissionProvider.getProvider();
-        return (permission != null);
+    @Override
+    public void onLoad() {
+        instance = this;
     }
 
     @Override
@@ -96,20 +85,6 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
         return false;
     }
 
-    Chat getChat() {
-        if (chat == null) {
-            if (!setupChat()) return null;
-        }
-        return chat;
-    }
-
-    Permission getPermission() {
-        if (permission == null) {
-            if (!setupPermission()) return null;
-        }
-        return permission;
-    }
-
     List<UUID> getOnlineUuids() {
         List<UUID> result = new ArrayList<>();
         for (Player player : getServer().getOnlinePlayers()) result.add(player.getUniqueId());
@@ -139,6 +114,10 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
         if (service == null) return null;
         return service.getCountry(ip).getName();
     }
+
+    public static SQLDatabase database() {
+        return instance.db;
+    }
 }
 
 class MyCommand implements CommandExecutor {
@@ -150,7 +129,7 @@ class MyCommand implements CommandExecutor {
         try {
             theMethod = commands.getClass().getMethod(name, UUID.class, String[].class);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         }
         this.method = theMethod;
     }

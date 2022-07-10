@@ -48,7 +48,6 @@ public abstract class PlayerInfo {
     public abstract void announce(String permission, String msg, Object... args);
     public abstract boolean hasPermission(UUID uuid, String permission);
     public abstract boolean isOnline(UUID uuid);
-    public abstract String getTitle(UUID uuid);
     public abstract OnlinePlayerInfo getOnlinePlayerInfo(UUID uuid);
     public abstract String countryForIP(String ip);
     public abstract void runSync(Runnable run);

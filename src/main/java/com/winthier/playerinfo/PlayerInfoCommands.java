@@ -1,5 +1,7 @@
 package com.winthier.playerinfo;
 
+import com.cavetale.core.command.CommandWarn;
+import com.winthier.playercache.PlayerCache;
 import com.winthier.playerinfo.util.Players;
 import java.util.Arrays;
 import java.util.UUID;
@@ -92,6 +94,7 @@ public final class PlayerInfoCommands {
         info.send(sender, "&3/PlayerInfo &bSharedIPs <&oName&b...> &7- &3Find common IPs");
         info.send(sender, "&3/PlayerInfo &bAltIPs <&oName&b> &7- &3Find common IPs of alts");
         info.send(sender, "&3/PlayerInfo &bOnlineCountries &7- &3Where are online players from");
+        info.send(sender, "&3/PlayerInfo &bmigrate <from> <to> &7- &3Migrate loginfo/ontime data");
     }
 
     private boolean playerinfoPrivate(UUID sender, String[] args) {
@@ -107,6 +110,13 @@ public final class PlayerInfoCommands {
             return playerinfoAltIPs(sender, Arrays.copyOfRange(args, 1, args.length));
         } else if (args.length >= 1 && firstArg.equalsIgnoreCase("OnlineCountries")) {
             info.getActions().onlineCountries(sender);
+            return true;
+        } else if (args.length == 3 && firstArg.equalsIgnoreCase("migrate")) {
+            try {
+                info.getActions().migrate(sender, PlayerCache.require(args[1]), PlayerCache.require(args[2]));
+            } catch (CommandWarn warn) {
+                info.send(sender, "%c%s", warn.getMessage());
+            }
             return true;
         } else {
             return false;

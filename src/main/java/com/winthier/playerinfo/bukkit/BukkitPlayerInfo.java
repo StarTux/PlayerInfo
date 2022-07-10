@@ -1,5 +1,6 @@
 package com.winthier.playerinfo.bukkit;
 
+import com.cavetale.core.perm.Perm;
 import com.winthier.playerinfo.OnlinePlayerInfo;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.util.Strings;
@@ -10,7 +11,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -60,30 +60,12 @@ class BukkitPlayerInfo extends PlayerInfo {
     @Override
     public boolean hasPermission(UUID uuid, String permission) {
         if (uuid == null) return true;
-        Player player = Bukkit.getServer().getPlayer(uuid);
-        if (player != null) return player.hasPermission(permission);
-        OfflinePlayer offPlayer = Bukkit.getServer().getOfflinePlayer(uuid);
-        return plugin.getPermission().playerHas((String) null, offPlayer, permission);
+        return Perm.get().has(uuid, permission);
     }
 
     @Override
     public boolean isOnline(UUID uuid) {
         return Bukkit.getServer().getPlayer(uuid) != null;
-    }
-
-    @Override
-    public String getTitle(UUID uuid) {
-        if (uuid == null) throw new NullPointerException("UUID cannot be null");
-        OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(uuid);
-        if (plugin.getChat() == null) {
-            if (plugin.getPermission() != null) return plugin.getPermission().getPrimaryGroup((String) null, player);
-            return null;
-        }
-        String prefix = plugin.getChat().getPlayerPrefix((String) null, player);
-        String suffix = plugin.getChat().getPlayerSuffix((String) null, player);
-        if (prefix == null) prefix = "";
-        if (suffix == null) suffix = "";
-        return ChatColor.translateAlternateColorCodes('&', prefix + suffix);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.winthier.playerinfo;
 
+import com.winthier.playercache.PlayerCache;
 import com.winthier.playerinfo.sql.CountryRow;
 import com.winthier.playerinfo.sql.IPRow;
 import com.winthier.playerinfo.sql.IgnoredIPRow;
@@ -21,6 +22,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import static com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin.database;
 
 @RequiredArgsConstructor
 public final class PlayerInfoActions {
@@ -66,10 +68,6 @@ public final class PlayerInfoActions {
         info.send(sender, "&3Player info for &b%s", playerName);
         LogInfoRow logInfoRow = playerRow.getLogInfo();
         info.send(sender, " &3UUID: &b%s", player);
-        String title = info.getTitle(player);
-        if (title != null) {
-            info.send(sender, " &3Title: [%s&3]", title);
-        }
         if (logInfoRow != null) {
             info.send(sender, " &3First seen: &b%s &3(%s ago)",
                       Strings.formatDate(logInfoRow.getFirstLog()),
@@ -239,5 +237,31 @@ public final class PlayerInfoActions {
             for (String name: names.get(country)) sb.append(" ").append(name);
             info.send(sender, sb.toString());
         }
+    }
+
+    protected void migrate(UUID sender, PlayerCache from, PlayerCache to) {
+        PlayerRow playerRowA = PlayerRow.find(from.uuid);
+        PlayerRow playerRowB = PlayerRow.find(to.uuid);
+
+        LogInfoRow logInfoA = playerRowA.getLogInfo();
+        LogInfoRow logInfoB = playerRowB.getLogInfo();
+
+        boolean didFirstLog = false;
+        if (logInfoA.getFirstLog().getTime() < logInfoB.getFirstLog().getTime()) {
+            logInfoB.setFirstLog(logInfoA.getFirstLog());
+            didFirstLog = true;
+        }
+        database().save(logInfoB);
+        database().delete(logInfoA);
+
+        OnTimeRow onTimeA = playerRowA.getOnTime();
+        OnTimeRow onTimeB = playerRowB.getOnTime();
+
+        onTimeB.setSeconds(onTimeB.getSeconds() + onTimeA.getSeconds());
+        database().save(onTimeB);
+        database().delete(onTimeA);
+
+        info.send(sender, "Migrated firstlog(" + didFirstLog + ") and OnTime"
+                  + " from " + from.name + " to " + to.name);
     }
 }

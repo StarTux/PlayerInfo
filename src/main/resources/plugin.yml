@@ -8,7 +8,7 @@ description: Store some information about players
 author: StarTux
 
 website: https://cavetale.com
-depend: [ SQL, PlayerCache, Vault ]
+depend: [Core, SQL, PlayerCache]
 
 commands:
 

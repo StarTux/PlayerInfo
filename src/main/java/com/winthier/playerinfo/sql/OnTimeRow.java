@@ -26,7 +26,7 @@ public class OnTimeRow implements SQLRow {
     private PlayerRow player;
 
     @Column(nullable = false)
-    private Integer seconds;
+    private int seconds;
 
     public static List<OnTimeRow> rankOntimes(int page) {
         if (page < 0) throw new IllegalArgumentException("Page cannot be negative");
