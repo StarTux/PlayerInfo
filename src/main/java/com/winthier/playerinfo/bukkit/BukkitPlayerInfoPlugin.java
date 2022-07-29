@@ -93,7 +93,7 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
 
     LookupService getGeoIP() {
         if (geoip == null) {
-            File file = new File("/home/mc/config/PlayerInfo/GeoIP.dat");
+            File file = new File("/home/mc/public/config/PlayerInfo/GeoIP.dat");
             if (!file.exists()) {
                 file = new File(getDataFolder(), "GeoIP.dat");
             }
