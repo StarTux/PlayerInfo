@@ -27,6 +27,7 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import com.cavetale.core.playercache.PlayerCache;
 
 @Getter
 public final class BukkitPlayerInfoPlugin extends JavaPlugin {
@@ -161,6 +162,8 @@ class MyCommand implements TabExecutor {
                 result.add(it.getName());
             }
         }
-        return result;
+        return !result.isEmpty()
+            ? result
+            : PlayerCache.completeNames(arg);
     }
 }
