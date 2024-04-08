@@ -1,5 +1,7 @@
 package com.winthier.playerinfo;
 
+import com.cavetale.core.command.RemotePlayer;
+import com.cavetale.core.connect.Connect;
 import com.winthier.playercache.PlayerCache;
 import com.winthier.playerinfo.sql.CountryRow;
 import com.winthier.playerinfo.sql.IPRow;
@@ -20,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import static com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin.database;
 
 @RequiredArgsConstructor
@@ -210,7 +210,7 @@ public final class PlayerInfoActions {
     protected void onlineCountries(UUID sender) {
         Map<String, Integer> stats = new HashMap<>();
         Map<String, List<String>> names = new HashMap<>();
-        for (Player player: Bukkit.getServer().getOnlinePlayers()) {
+        for (RemotePlayer player : Connect.get().getRemotePlayers()) {
             PlayerRow playerRow = PlayerRow.find(player.getUniqueId());
             if (playerRow == null) continue;
             PlayerCountryAndIPRow countryIPRow = playerRow.getCountry();
@@ -231,7 +231,7 @@ public final class PlayerInfoActions {
         }
         List<String> ls = new ArrayList<>(stats.keySet());
         Collections.sort(ls, (a, b) -> Integer.compare(stats.get(b), stats.get(a)));
-        for (String country: ls) {
+        for (String country : ls) {
             StringBuilder sb = new StringBuilder();
             sb.append(country).append("(&e").append(stats.get(country)).append("&r)&7");
             for (String name: names.get(country)) sb.append(" ").append(name);
