@@ -121,6 +121,10 @@ public final class BukkitPlayerInfoPlugin extends JavaPlugin {
     public static SQLDatabase database() {
         return instance.db;
     }
+
+    public static BukkitPlayerInfoPlugin plugin() {
+        return instance;
+    }
 }
 
 class MyCommand implements TabExecutor {

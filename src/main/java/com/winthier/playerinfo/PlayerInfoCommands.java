@@ -1,11 +1,29 @@
 package com.winthier.playerinfo;
 
 import com.cavetale.core.command.CommandWarn;
+import com.cavetale.core.command.RemotePlayer;
+import com.cavetale.core.connect.Connect;
 import com.winthier.playercache.PlayerCache;
+import com.winthier.playerinfo.sql.LogInfoRow;
+import com.winthier.playerinfo.sql.PlayerRow;
 import com.winthier.playerinfo.util.Players;
+import com.winthier.playerinfo.util.Strings;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import static com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin.database;
+import static com.winthier.playerinfo.bukkit.BukkitPlayerInfoPlugin.plugin;
+import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.textOfChildren;
+import static net.kyori.adventure.text.format.NamedTextColor.*;
 
 @RequiredArgsConstructor
 public final class PlayerInfoCommands {
@@ -166,6 +184,37 @@ public final class PlayerInfoCommands {
     }
 
     public boolean firstlog(UUID sender, String[] args) {
+        if (args.length == 1 && args[0].equals("-online") && info.hasPermission(sender, "playerinfo.ontime.admin")) {
+            final List<UUID> uuids = new ArrayList<>();
+            for (RemotePlayer remotePlayer : Connect.get().getRemotePlayers()) {
+                uuids.add(remotePlayer.getUniqueId());
+            }
+            database().scheduleAsyncTask(() -> {
+                    final List<PlayerRow> playerRows = PlayerRow.findAll(uuids);
+                    final Map<Integer, UUID> uuidMap = new HashMap<>();
+                    for (var it : playerRows) {
+                        uuidMap.put(it.getId(), it.getUuid());
+                    }
+                    final List<LogInfoRow> logInfos = new ArrayList<>(playerRows.size());
+                    logInfos.addAll(database().find(LogInfoRow.class)
+                                    .in("player", playerRows)
+                                    .findList());
+                    Collections.sort(logInfos, Comparator.comparing(LogInfoRow::getFirstLog));
+                    Bukkit.getScheduler().runTask(plugin(), () -> {
+                            final CommandSender target = sender != null
+                                ? Bukkit.getPlayer(sender)
+                                : Bukkit.getConsoleSender();
+                            if (target == null) return;
+                            for (LogInfoRow row : logInfos) {
+                                final UUID uuid = uuidMap.get(row.getPlayer().getId());
+                                target.sendMessage(textOfChildren(text(PlayerCache.nameForUuid(uuid), WHITE),
+                                                                  text(" " + Strings.formatDate(row.getFirstLog()), DARK_AQUA),
+                                                                  text(" " + Strings.formatTimeDiffToNow(row.getFirstLog()), GRAY)));
+                            }
+                        });
+                });
+            return true;
+        }
         if (args.length > 1) return false;
         final int page;
         if (args.length >= 1) {
