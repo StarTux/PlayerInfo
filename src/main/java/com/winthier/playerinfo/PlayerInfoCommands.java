@@ -184,7 +184,7 @@ public final class PlayerInfoCommands {
     }
 
     public boolean firstlog(UUID sender, String[] args) {
-        if (args.length == 1 && args[0].equals("-online") && info.hasPermission(sender, "playerinfo.ontime.admin")) {
+        if (args.length == 1 && args[0].equals("-online")) {
             final List<UUID> uuids = new ArrayList<>();
             for (RemotePlayer remotePlayer : Connect.get().getRemotePlayers()) {
                 uuids.add(remotePlayer.getUniqueId());
