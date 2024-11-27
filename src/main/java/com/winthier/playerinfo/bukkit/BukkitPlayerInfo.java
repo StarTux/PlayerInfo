@@ -76,7 +76,7 @@ class BukkitPlayerInfo extends PlayerInfo {
         final Location loc = player.getLocation();
         result.setLocation(loc.getWorld().getName(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         result.setHealth((int) player.getHealth());
-        result.setMaxHealth((int) player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
+        result.setMaxHealth((int) player.getAttribute(Attribute.MAX_HEALTH).getValue());
         result.setFoodLevel(player.getFoodLevel());
         result.setSaturation((int) player.getSaturation());
         result.setExpLevel(player.getLevel());
