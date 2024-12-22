@@ -11,6 +11,7 @@ public final class Strings {
     private static final int DAYS_PER_MONTH = 30;
     private static final DateFormat FORMAT_DATE_FORMAT = new SimpleDateFormat("MMM dd yyyy HH:mm:ss");
     private static final Pattern IP_PATTERN = Pattern.compile("[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}");
+    private static final boolean DO_MONTHS = false;
 
     public static String formatDate(Date date) {
         return FORMAT_DATE_FORMAT.format(date);
@@ -19,16 +20,23 @@ public final class Strings {
     public static String formatSeconds(final long seconds) {
         final long minutes = seconds / 60;
         final long hours = minutes / 60;
-        final long days = hours / 24;
+        long days = hours / 24;
         if (days == 0L) {
             return String.format("%02d:%02d:%02d", hours % 24, minutes % 60, seconds % 60);
         }
         final long years = days / DAYS_PER_YEAR;
-        final long months = Math.min(12, (days - years * DAYS_PER_YEAR) / DAYS_PER_MONTH);
+        days -= years * DAYS_PER_YEAR;
+        final long months;
+        if (DO_MONTHS) {
+            months = days / DAYS_PER_MONTH;
+            days -= months * DAYS_PER_MONTH;
+        } else {
+            months = 0;
+        }
         StringBuilder sb = new StringBuilder();
         if (years > 0) sb.append(years).append("y");
-        if (months > 0) sb.append(months).append("m");
-        if (days > 0) sb.append(days % DAYS_PER_MONTH).append("d");
+        if (DO_MONTHS && months > 0) sb.append(months).append("m");
+        if (days > 0) sb.append(days).append("d");
         sb.append(String.format(" %02d:%02d", hours % 24, minutes % 60));
         return sb.toString();
     }
