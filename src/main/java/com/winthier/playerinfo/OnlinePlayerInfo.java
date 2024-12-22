@@ -1,7 +1,7 @@
 package com.winthier.playerinfo;
 
-import lombok.Data;
 import java.util.List;
+import lombok.Data;
 
 @Data
 public final class OnlinePlayerInfo {

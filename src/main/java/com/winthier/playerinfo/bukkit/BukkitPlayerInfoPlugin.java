@@ -2,6 +2,7 @@ package com.winthier.playerinfo.bukkit;
 
 import com.cavetale.core.command.RemotePlayer;
 import com.cavetale.core.connect.Connect;
+import com.cavetale.core.playercache.PlayerCache;
 import com.maxmind.geoip.LookupService;
 import com.winthier.playerinfo.PlayerInfo;
 import com.winthier.playerinfo.PlayerInfoCommands;
@@ -27,7 +28,6 @@ import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
-import com.cavetale.core.playercache.PlayerCache;
 
 @Getter
 public final class BukkitPlayerInfoPlugin extends JavaPlugin {
