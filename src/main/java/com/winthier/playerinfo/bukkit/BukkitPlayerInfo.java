@@ -78,7 +78,8 @@ class BukkitPlayerInfo extends PlayerInfo {
         result.setHealth((int) player.getHealth());
         result.setMaxHealth((int) player.getAttribute(Attribute.MAX_HEALTH).getValue());
         result.setFoodLevel(player.getFoodLevel());
-        result.setSaturation((int) player.getSaturation());
+        result.setSaturation(player.getSaturation());
+        result.setExhaustion(player.getExhaustion());
         result.setExpLevel(player.getLevel());
         result.setExpPerc((int) Math.round(player.getExp() * 100f));
         result.setExp((int) (player.getExp() * (float) player.getExpToLevel()));

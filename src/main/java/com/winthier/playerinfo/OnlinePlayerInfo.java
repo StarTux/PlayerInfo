@@ -12,7 +12,8 @@ public final class OnlinePlayerInfo {
     private int health;
     private int maxHealth;
     private int foodLevel;
-    private int saturation;
+    private float saturation;
+    private float exhaustion;
     private int exp;
     private int expPerc;
     private int expLevel;

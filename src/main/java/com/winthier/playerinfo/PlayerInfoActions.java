@@ -86,7 +86,7 @@ public final class PlayerInfoActions {
             info.send(sender, " &8Game Mode: &7%s", opi.getGameMode());
             info.send(sender, " &8Location: &7%s %d,%,d,%d", opi.getWorld(), opi.getX(), opi.getY(), opi.getZ());
             info.send(sender, " &8Health: &7%d/%d", opi.getHealth(), opi.getMaxHealth());
-            info.send(sender, " &8Food: &7%d/%d &8Sat: &7%d", opi.getFoodLevel(), 20, opi.getSaturation());
+            info.send(sender, " &8Food: &7%d/%d &8Sat: &7%.1f &8Exh: &7%.1f", opi.getFoodLevel(), 20, opi.getSaturation(), opi.getExhaustion());
             info.send(sender, " &8Exp: &7%d &8(&7%d%%&8) &8Level: &7%d", opi.getExp(), opi.getExpPerc(), opi.getExpLevel());
             if (opi.getPotionEffects() != null && !opi.getPotionEffects().isEmpty()) {
                 info.send(sender, " &8Potion effects: &7%s", Strings.join(opi.getPotionEffects(), ", "));
