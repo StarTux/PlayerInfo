@@ -15,6 +15,42 @@
   <url>https://cavetale.com</url>
   <packaging>jar</packaging>
 
+  <build>
+    <plugins>
+
+      <!-- Shade -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <artifactSet>
+                <includes>
+                  <include>com.maxmind.geoip:geoip-api</include>
+                </includes>
+              </artifactSet>
+              <filters>
+                <filter>
+                  <artifact>com.maxmind.geoip:geoip-api</artifact>
+                  <includes>
+                    <include>com/maxmind/geoip/**</include>
+                  </includes>
+                </filter>
+              </filters>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+  </build>
+
   <dependencies>
 
     <!-- Paper API -->
